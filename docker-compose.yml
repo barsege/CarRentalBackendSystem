@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  kafka:
+    image: bashj79/kafka-kraft
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/apt/kafka/kafka-logs
+
+  mongodb:
+    container_name: filter-db-dev
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  mongodb2:
+    container_name: invoice-db-dev
+    image: mongo
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb2_data:/data/db
+
+  mysqldb:
+    container_name: maintenance-db-dev
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysql
+      - MYSQL_DATABASE=mysql
+      - MYSQL_USER=mysql
+    image: mysql
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysqldb_data:/data/db
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak-t1
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    command: start-dev
+    volumes:
+      - .:/apt/jboss/keycloak/imports
+
+volumes:
+  kafka_data:
+  mongodb_data:
+  mongodb2_data:
+  mysqldb_data:
